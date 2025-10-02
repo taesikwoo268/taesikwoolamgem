@@ -13,55 +13,111 @@ public class ShopScene extends JPanel {
     private final InputHandler input;
     private final Runnable onBack;
 
-    private boolean mouseHandled = false;
+    private String currentTab = "BALLS"; // mặc định mở BALLS
+    private final GridPanel gridPanel;
 
     public ShopScene(InputHandler input, Runnable onBack) {
         this.input = input;
         this.onBack = onBack;
 
-        setBackground(Color.DARK_GRAY);
+        this.gridPanel = new GridPanel();
+        this.gridPanel.setBounds(0, 60, Constants.WIDTH, Constants.HEIGHT - 60);
 
-        Font font = new Font("Serif", Font.PLAIN, 28);
-        FontMetrics fm = getFontMetrics(font);
+        initUI();
+        initButtons();
+        initMouse();
+        startRepaintTimer();
+    }
 
-        // Danh sách vật phẩm demo
-        String[] items = {"Speed +5", "Bigger Paddle", "Extra Life"};
-        int startY = 200;
-        int spacing = 50;
+    /** Khởi tạo UI cơ bản */
+    private void initUI() {
+        setBackground(Color.BLACK);
+        setLayout(null); // quản lý thủ công
+        add(gridPanel);
 
-        for (int i = 0; i < items.length; i++) {
-            buttons.add(new Button(items[i], Constants.WIDTH / 2, startY + i * spacing, fm));
+        // load dữ liệu mặc định
+        loadTabData("BALLS");
+    }
+
+    /** Tạo các button */
+    private void initButtons() {
+        String[] texts = {"BACK", "BALLS", "PADDLES", "GACHA"};
+        int tabCount = texts.length;
+        int tabWidth = Constants.WIDTH / tabCount;  // 800 / 4 = 200
+        int tabHeight = 50;
+
+        buttons.clear();
+        for (int i = 0; i < tabCount; i++) {
+            int x = i * tabWidth;
+            int y = 0;
+            buttons.add(new Button(texts[i], x, y, tabWidth, tabHeight));
         }
-        // Nút back
-        buttons.add(new Button("BACK", Constants.WIDTH / 2, startY + items.length * spacing + 50, fm));
+    }
 
+    /** Gắn mouse input */
+    private void initMouse() {
         addMouseListener(input.createMouseAdapter());
         addMouseMotionListener(input.createMouseAdapter());
+        addMouseWheelListener(input.createMouseAdapter()); // cuộn xuống grid
+    }
 
+    /** Khởi động timer repaint */
+    private void startRepaintTimer() {
         new javax.swing.Timer(16, e -> repaint()).start();
     }
 
+    /** Cập nhật trạng thái menu */
     private void update() {
         int mx = input.getMouseX();
         int my = input.getMouseY();
 
         for (Button button : buttons) {
             button.hovered = button.contains(mx, my);
-
-            if (button.hovered && input.isMousePressed() && !mouseHandled) {
-                mouseHandled = true;
-                System.out.println("Clicked " + button.text);
-                if (button.text.equals("BACK")) {
-                    input.resetMouse();
-                    onBack.run();
-                } else {
-                    System.out.println("Mua: " + button.text);
-                }
+            if (button.hovered && input.consumeClick()) {
+                handleButtonClick(button.text);
             }
         }
+    }
 
-        if (!input.isMousePressed()) {
-            mouseHandled = false;
+    /** Xử lý sự kiện click button */
+    private void handleButtonClick(String text) {
+        System.out.println("Clicked " + text);
+        switch (text) {
+            case "BACK":
+                onBack.run();
+                break;
+            case "BALLS":
+            case "PADDLES":
+            case "GACHA":
+                currentTab = text;
+                loadTabData(text);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /** Load dữ liệu theo tab */
+    private void loadTabData(String tab) {
+        if ("BALLS".equals(tab)) {
+            gridPanel.setData(30); // tạm thời 30 ball skin
+        } else if ("PADDLES".equals(tab)) {
+            gridPanel.setData(20); // tạm thời 20 paddle skin
+        } else if ("GACHA".equals(tab)) {
+            gridPanel.setData(10); // placeholder cho gacha
+        }
+    }
+
+    /** Vẽ background */
+    private void drawBackground(Graphics2D g2) {
+        g2.setColor(Color.BLACK);
+        g2.fillRect(0, 0, getWidth(), getHeight());
+    }
+
+    /** Vẽ button */
+    private void drawButtons(Graphics2D g2) {
+        for (Button button : buttons) {
+            button.draw(g2);
         }
     }
 
@@ -69,15 +125,12 @@ public class ShopScene extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.setFont(new Font("Serif", Font.PLAIN, 28));
-        g2.setColor(Color.WHITE);
-
-        g2.drawString("SHOP", Constants.WIDTH / 2 - 40, 150);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setFont(new Font("Serif", Font.PLAIN, 32));
 
         update();
-
-        for (Button button : buttons) {
-            button.draw(g2);
-        }
+        drawBackground(g2);
+        drawButtons(g2);
+        // gridPanel được add() nên tự vẽ ở dưới
     }
 }

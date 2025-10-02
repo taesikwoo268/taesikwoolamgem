@@ -1,6 +1,7 @@
 package core;
 
 import game.GameScene;
+import ui.BallScene;
 import ui.MenuScene;
 import ui.ShopScene;
 import utils.Constants;
@@ -61,6 +62,12 @@ public class SceneManager {
 
     public void showShopScene(ShopScene shopScene) {
         frame.setContentPane(shopScene);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    public void showBallScene(BallScene ballScene) {
+        frame.setContentPane(ballScene);
         frame.revalidate();
         frame.repaint();
     }

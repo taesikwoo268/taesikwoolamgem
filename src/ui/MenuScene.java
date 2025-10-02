@@ -44,12 +44,12 @@ public class MenuScene extends JPanel {
         Font font = new Font("Serif", Font.PLAIN, 32);
         FontMetrics fm = getFontMetrics(font);
 
-        String[] texts = {"PLAY", "SHOP", "COLLECTION", "QUIT"};
+        String[] texts = {"PLAY", "SHOP", "INVENTORY", "QUIT"};
         int startY = 350;
         int spacing = 50;
 
         for (int i = 0; i < texts.length; i++) {
-            buttons.add(new Button(texts[i], Constants.WIDTH / 2, startY + i * spacing, fm));
+            buttons.add(new Button(texts[i], Constants.WIDTH / 2, startY + i * spacing, fm,true));
         }
     }
 
@@ -87,7 +87,7 @@ public class MenuScene extends JPanel {
             case "SHOP":
                 onShop.run();
                 break;
-            case "COLLECTION":
+            case "IVENTORY":
                 onInventory.run();
                 break;
             case "QUIT":

@@ -3,6 +3,7 @@ package core;
 import game.GameScene;
 import ui.MenuScene;
 import ui.ShopScene;
+import ui.BallScene;
 import utils.Constants;
 
 import javax.swing.*;
@@ -30,7 +31,7 @@ public class GameEngine {
                 input,
                 this::startGame,
                 this::openShop,
-                () -> System.out.println("Collection!"),
+                () -> System.out.println("iven!"),
                 () -> System.exit(0)
         );
         menuScene.setPreferredSize(new Dimension(Constants.WIDTH, Constants.HEIGHT));
@@ -50,7 +51,10 @@ public class GameEngine {
     /** Mở shop */
     private void openShop() {
         input.resetMouse();
-        ShopScene shopScene = new ShopScene(input, sceneManager::showMenuScene);
+        ShopScene shopScene = new ShopScene(
+                input,
+                () -> sceneManager.showMenuScene()
+        );
         sceneManager.showShopScene(shopScene);
     }
 

@@ -3,7 +3,6 @@ package core;
 import game.GameScene;
 import ui.MenuScene;
 import ui.ShopScene;
-import ui.BallScene;
 import utils.Constants;
 
 import javax.swing.*;

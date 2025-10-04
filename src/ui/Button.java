@@ -1,8 +1,10 @@
 package ui;
 
 import utils.Constants;
+import core.ResourceLoader;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Button {
     public String text;
@@ -10,8 +12,9 @@ public class Button {
     public boolean hovered;
     private final Font baseFont;
     private final boolean centered; // true = menu style, false = rectangular style
+    private final BufferedImage icon;
 
-    /** Dùng cho menu (căn giữa theo WIDTH) */
+    /** Dùng cho menu chữ (căn giữa theo WIDTH) */
     public Button(String text, int x, int y, FontMetrics fm, boolean middle) {
         this.text = text;
         int width = fm.stringWidth(text);
@@ -21,18 +24,36 @@ public class Button {
         this.bound = new Rectangle(Rx, Ry - height, width, height);
         this.baseFont = new Font("Serif", Font.PLAIN, 32);
         this.centered = true;
+        this.icon = null;
     }
 
-    /** Dùng cho shop (nút hình chữ nhật cố định) */
+    /** Dùng cho shop chữ (nút hình chữ nhật cố định) */
     public Button(String text, int x, int y, int w, int h) {
         this.text = text;
         this.bound = new Rectangle(x, y, w, h);
         this.baseFont = new Font("Serif", Font.PLAIN, 24);
         this.centered = false;
+        this.icon = null;
+    }
+
+    /** Dùng cho shop icon */
+    public Button(BufferedImage icon, int x, int y, int w, int h) {
+        this.icon = icon;
+        this.bound = new Rectangle(x,y,w,h);
+        this.text = null;
+        this.baseFont = new Font("Serif", Font.PLAIN, 24);
+        this.centered = false;
     }
 
     public void draw(Graphics2D g) {
-        if (centered) {
+        if (icon != null) {
+            // --- Icon button ---
+            g.drawImage(icon, bound.x, bound.y, bound.width, bound.height, null);
+            if (hovered) {
+                g.setColor(new Color(255, 255, 0, 100));
+                g.fillRect(bound.x, bound.y, bound.width, bound.height);
+            }
+        } else if (centered) {
             // --- Menu style ---
             g.setFont(baseFont);
             if (hovered) {
@@ -62,13 +83,15 @@ public class Button {
             }
 
             // căn giữa text trong ô
-            g.setFont(baseFont);
-            FontMetrics fm = g.getFontMetrics();
-            int textWidth = fm.stringWidth(text);
-            int textHeight = fm.getAscent();
-            int tx = bound.x + (bound.width - textWidth) / 2;
-            int ty = bound.y + (bound.height + textHeight) / 2 - 4;
-            g.drawString(text, tx, ty);
+            if (text != null) {
+                g.setFont(baseFont);
+                FontMetrics fm = g.getFontMetrics();
+                int textWidth = fm.stringWidth(text);
+                int textHeight = fm.getAscent();
+                int tx = bound.x + (bound.width - textWidth) / 2;
+                int ty = bound.y + (bound.height + textHeight) / 2 - 4;
+                g.drawString(text, tx, ty);
+            }
         }
     }
 

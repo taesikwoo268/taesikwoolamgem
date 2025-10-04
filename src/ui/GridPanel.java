@@ -67,7 +67,7 @@ public class GridPanel extends JPanel {
 
             // vẽ skin placeholder
             g2.setColor(Color.GRAY);
-            g2.fillRect(x, y, itemSize, itemSize);
+            g2.fillRect(x, y, itemSize, itemSize); // can sua sang skin
             g2.setColor(Color.WHITE);
             g2.drawRect(x, y, itemSize, itemSize);
 

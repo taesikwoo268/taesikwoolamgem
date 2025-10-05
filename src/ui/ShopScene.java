@@ -2,6 +2,8 @@ package ui;
 
 import utils.Constants;
 import core.InputHandler;
+import core.ResourceLoader;
+import entity.Skins;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,12 +18,15 @@ public class ShopScene extends JPanel {
     private String currentTab = "BALLS"; // mặc định mở BALLS
     private final GridPanel gridPanel;
 
+    private List<Skins> ballSkins;
+    private List<Skins> paddleSkins;
+
     public ShopScene(InputHandler input, Runnable onBack) {
         this.input = input;
         this.onBack = onBack;
 
-        this.gridPanel = new GridPanel();
-        this.gridPanel.setBounds(0, 60, Constants.WIDTH, Constants.HEIGHT - 60);
+        this.gridPanel = new GridPanel(input);
+        this.gridPanel.setBounds(0, 55, Constants.WIDTH, Constants.HEIGHT - 60);
 
         initUI();
         initButtons();
@@ -34,9 +39,11 @@ public class ShopScene extends JPanel {
         setBackground(Color.BLACK);
         setLayout(null); // quản lý thủ công
         add(gridPanel);
+        ballSkins = ResourceLoader.loadSkins("assets/images/balls.txt");
+        paddleSkins = new ArrayList<>();
 
-        // load dữ liệu mặc định
-        loadTabData("BALLS");
+        // Hiển thị luôn tab BALLS
+        gridPanel.setSkins(ballSkins);
     }
 
     /** Tạo các button */
@@ -66,7 +73,7 @@ public class ShopScene extends JPanel {
         new javax.swing.Timer(16, e -> repaint()).start();
     }
 
-    /** Cập nhật trạng thái menu */
+    /** Cập nhật trạng thái shop */
     private void update() {
         int mx = input.getMouseX();
         int my = input.getMouseY();
@@ -87,26 +94,32 @@ public class ShopScene extends JPanel {
                 onBack.run();
                 break;
             case "BALLS":
+                currentTab = "BALLS";
+                if (ballSkins.isEmpty()) { // chỉ load lần đầu
+                    ballSkins = ResourceLoader.loadSkins("assets/images/ball.txt");
+                }
+                gridPanel.setSkins(ballSkins);
+                gridPanel.setIsBall(true);
+                gridPanel.setCurrentTab(currentTab);
+                break;
             case "PADDLES":
+                currentTab = "PADDLES";
+                if (paddleSkins.isEmpty()) {
+                    paddleSkins = ResourceLoader.loadSkins("assets/images/paddles.txt");
+                }
+                gridPanel.setSkins(paddleSkins);
+                gridPanel.setIsBall(false);
+                gridPanel.setCurrentTab(currentTab);
+                break;
             case "GACHA":
-                currentTab = text;
-                loadTabData(text);
+                currentTab = "GACHA";
+                gridPanel.setCurrentTab(currentTab);
                 break;
             default:
                 break;
         }
     }
 
-    /** Load dữ liệu theo tab */
-    private void loadTabData(String tab) {
-        if ("BALLS".equals(tab)) {
-            gridPanel.setData(30); // tạm thời 30 ball skin
-        } else if ("PADDLES".equals(tab)) {
-            gridPanel.setData(20); // tạm thời 20 paddle skin
-        } else if ("GACHA".equals(tab)) {
-            gridPanel.setData(10); // placeholder cho gacha
-        }
-    }
 
     /** Vẽ background */
     private void drawBackground(Graphics2D g2) {

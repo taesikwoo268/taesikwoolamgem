@@ -17,6 +17,7 @@ public class Ball extends Entity{
         this.img = ResourceLoader.loadImg("assets/images/ball.png");
     }
 
+
     @Override
     public void update() {
         previousPosition.set(position.x, position.y);

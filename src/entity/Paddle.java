@@ -15,8 +15,8 @@ public class Paddle extends Entity {
     public Paddle(float x, float y, InputHandler input) {
         super(x, y, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
         this.input = input;
-        sprites[0] = ResourceLoader.loadImg("assets/images/paddle2.png");
-        sprites[1] = ResourceLoader.loadImg("assets/images/paddle3.png");
+        sprites[0] = ResourceLoader.loadImg("assets/images/Paddles/paddle2.png");
+        sprites[1] = ResourceLoader.loadImg("assets/images/Paddles/paddle3.png");
         this.setImg(sprites[0]);
     }
 

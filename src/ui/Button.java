@@ -37,10 +37,10 @@ public class Button {
     }
 
     /** Dùng cho shop icon */
-    public Button(BufferedImage icon, int x, int y, int w, int h) {
+    public Button(String text, BufferedImage icon, int x, int y, int w, int h) {
+        this.text = text;
         this.icon = icon;
         this.bound = new Rectangle(x,y,w,h);
-        this.text = null;
         this.baseFont = new Font("Serif", Font.PLAIN, 24);
         this.centered = false;
     }
@@ -49,10 +49,10 @@ public class Button {
         if (icon != null) {
             // --- Icon button ---
             g.drawImage(icon, bound.x, bound.y, bound.width, bound.height, null);
-            if (hovered) {
-                g.setColor(new Color(255, 255, 0, 100));
-                g.fillRect(bound.x, bound.y, bound.width, bound.height);
-            }
+//            if (hovered) {
+//                g.setColor(new Color(255, 255, 0, 100));
+//                g.fillRect(bound.x, bound.y, bound.width, bound.height);
+//            }
         } else if (centered) {
             // --- Menu style ---
             g.setFont(baseFont);

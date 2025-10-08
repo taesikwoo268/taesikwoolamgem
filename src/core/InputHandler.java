@@ -102,5 +102,16 @@ public class InputHandler extends KeyAdapter {
         }
         return false;
     }
+    public void setMousePressed(boolean pressed) {
+        this.mousePressed = pressed;
+    }
 
+    public void setMouseClicked(boolean clicked) {
+        if (clicked) this.mouseClickedOnce = true;
+    }
+
+    public void setMousePosition(int x, int y) {
+        this.mouseX = x;
+        this.mouseY = y;
+    }
 }

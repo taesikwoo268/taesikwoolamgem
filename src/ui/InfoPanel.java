@@ -1,5 +1,6 @@
 package ui;
 
+import core.ResourceLoader;
 import entity.Skins;
 
 import javax.swing.*;
@@ -9,10 +10,11 @@ public class InfoPanel extends JPanel {
     private Skins selectedSkin;
     private Rectangle buyButtonBounds;
     private boolean hovered = false;
+    private boolean isBall;
 
     public InfoPanel() {
         setOpaque(false);
-        buyButtonBounds = new Rectangle(150, 420, 160, 50);
+        buyButtonBounds = new Rectangle(120, 420, 160, 50);
 
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent e) {
@@ -40,8 +42,19 @@ public class InfoPanel extends JPanel {
         if (selectedSkin.isBought()) {
             System.out.println("Equipped " + selectedSkin.getName());
         } else {
-            System.out.println("Bought " + selectedSkin.getName());
-            selectedSkin.setBought(true);
+            int money = ResourceLoader.getMoney("assets/images/Balls/balls.txt");
+            int price = selectedSkin.getPrice();
+
+            if (money >= price) {
+                money -= price;
+                selectedSkin.setBought(true);
+                ResourceLoader.setMoney("assets/images/Balls/balls.txt", money);
+                ResourceLoader.updateIsBought("assets/images/Balls/balls.txt", selectedSkin.getId());
+
+                System.out.println("Đã mua " + selectedSkin.getName() + " với giá " + price);
+            } else {
+                System.out.println("Không đủ tiền để mua " + selectedSkin.getName());
+            }
         }
         repaint();
     }
@@ -55,7 +68,7 @@ public class InfoPanel extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // tên skin
-        g2.setColor(Color.BLACK);
+        g2.setColor(Color.WHITE);
         g2.setFont(new Font("Serif", Font.BOLD, 32));
         FontMetrics fm = g2.getFontMetrics();
         String name = selectedSkin.getName().toUpperCase();
@@ -64,10 +77,18 @@ public class InfoPanel extends JPanel {
 
         // bóng hoặc paddle
         if (selectedSkin.getImg() != null) {
-            g2.drawImage(selectedSkin.getImg(), getWidth() / 2 - 100, 120, 200, 200, null);
+            if (isBall) {
+                g2.drawImage(selectedSkin.getImg(), getWidth() / 2 - 100, 120, 200, 200, null);
+            } else {
+                g2.drawImage(selectedSkin.getImg(), getWidth() / 2 - 100, 200, 200, 50, null);
+            }
         } else {
             g2.setColor(selectedSkin.getColor());
-            g2.fillOval(getWidth() / 2 - 80, 140, 160, 160);
+            if (isBall) {
+                g2.fillOval(getWidth() / 2 - 80, 140, 160, 160);
+            } else {
+                g2.fillRect(getWidth() / 2 - 100, 200, 200, 50);
+            }
         }
 
         // button vàng
@@ -85,5 +106,9 @@ public class InfoPanel extends JPanel {
         int textX = buyButtonBounds.x + (buyButtonBounds.width - textWidth) / 2;
         int textY = buyButtonBounds.y + buyButtonBounds.height / 2 + 8;
         g2.drawString(text, textX, textY);
+    }
+
+    public void setIsBall(boolean isBall) {
+        this.isBall = isBall;
     }
 }
